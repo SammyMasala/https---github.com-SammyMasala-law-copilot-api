@@ -8,7 +8,7 @@ service: api
 stages:
   default:
     params:
-      tableName: "users-table-${sls:stage}"
+      tableName: "sessions-table-${sls:stage}"
 
 plugins:
   - serverless-wsgi
@@ -34,9 +34,9 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - Fn::GetAtt: [UsersTable, Arn]
+            - Fn::GetAtt: [SessionsTable, Arn]
   environment:
-    USERS_TABLE: ${param:tableName}
+    SESSIONS_TABLE: ${param:tableName}
 
 functions:
   api:
@@ -51,14 +51,14 @@ functions:
 
 resources:
   Resources:
-    UsersTable:
+    SessionsTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: session_id
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: session_id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

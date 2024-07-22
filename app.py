@@ -1,50 +1,46 @@
 import os
 
-import boto3
 from flask import Flask, jsonify, make_response, request
+
+from api import init
+from api.libs.parse_http import parse_http_get, parse_http_post
+from api.services.session_service import SessionService
 
 app = Flask(__name__)
 
+session_service: SessionService = init().session_service
 
-dynamodb_client = boto3.client('dynamodb')
+@app.route('/session/<string:session_id>', methods=["GET"])
+def get_session(session_id):
+    try:
+        print("Session id: ", session_id)
+        result = session_service.get_session(session_id=session_id)
+        print(result)
+        if not result:
+            return jsonify({'result': 'session not found', 'session': None}), 404    
+        else:
+            return jsonify({'result': 'successful', 'session': result}), 200   
+    except Exception as exc:
+        print(exc)
+        return jsonify(
+            {'result': 'Server Exception',
+             'session': None}
+        ), 502
 
-if os.environ.get('IS_OFFLINE'):
-    dynamodb_client = boto3.client(
-        'dynamodb', region_name='localhost', endpoint_url='http://localhost:8000'
-    )
-
-
-USERS_TABLE = os.environ['USERS_TABLE']
-
-
-@app.route('/users/<string:user_id>')
-def get_user(user_id):
-    result = dynamodb_client.get_item(
-        TableName=USERS_TABLE, Key={'userId': {'S': user_id}}
-    )
-    item = result.get('Item')
-    if not item:
-        return jsonify({'error': 'Could not find user with provided "userId"'}), 404
-
-    return jsonify(
-        {'userId': item.get('userId').get('S'), 'name': item.get('name').get('S')}
-    )
-
-
-@app.route('/users', methods=['POST'])
-def create_user():
-    user_id = request.json.get('userId')
-    name = request.json.get('name')
-    if not user_id or not name:
-        return jsonify({'error': 'Please provide both "userId" and "name"'}), 400
-
-    dynamodb_client.put_item(
-        TableName=USERS_TABLE, Item={'userId': {'S': user_id}, 'name': {'S': name}}
-    )
-
-    return jsonify({'userId': user_id, 'name': name})
+@app.route('/session/save-session', methods=['POST'])
+def put_session():
+    try: 
+        print(request)
+        body = parse_http_post(request)
+        session_service.put_session(session=body.get("session"))
+        return jsonify(result="success"),200
+    except Exception as exc:
+        print(exc)
+        return jsonify(
+            {'result': 'Server Exception'}
+        ), 502
 
 
 @app.errorhandler(404)
 def resource_not_found(e):
-    return make_response(jsonify(error='Not found!'), 404)
+    return make_response(jsonify(result='Not found!'), 404)

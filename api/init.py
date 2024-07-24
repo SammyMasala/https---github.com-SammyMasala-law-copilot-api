@@ -15,10 +15,10 @@ def init():
     chat_service = ChatService(chat_repository)
     return {
         # Repositories
-        session_repository,
-        chat_repository,
+        "session_repository": session_repository,
+        "chat_repository": chat_repository,
 
         # Services
-        session_service,
-        chat_service
+        "session_service": session_service,
+        "chat_service": chat_service
     }

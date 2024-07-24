@@ -2,20 +2,20 @@ import os
 
 from flask import Flask, jsonify, make_response, request
 
-from api import init
+from api.init import init
 from api.libs.parse_http import parse_http_get, parse_http_post
 from api.services.session_service import SessionService
 
 app = Flask(__name__)
 
-session_service: SessionService = init().session_service
+session_service: SessionService = init()["session_service"]
 
-@app.route('/session/<string:session_id>', methods=["GET"])
-def get_session(session_id):
+@app.route('/session', methods=["GET"])
+def get_session():
     try:
-        print("Session id: ", session_id)
-        result = session_service.get_session(session_id=session_id)
-        print(result)
+        params = parse_http_get(request=request)
+        print(params)
+        result = session_service.get_session(session_id=params.get("session_id"))
         if not result:
             return jsonify({'result': 'session not found', 'session': None}), 404    
         else:
@@ -30,7 +30,7 @@ def get_session(session_id):
 @app.route('/session/save-session', methods=['POST'])
 def put_session():
     try: 
-        print(request)
+        print(request.json)
         body = parse_http_post(request)
         session_service.put_session(session=body.get("session"))
         return jsonify(result="success"),200
@@ -40,6 +40,9 @@ def put_session():
             {'result': 'Server Exception'}
         ), 502
 
+@app.route("/health-check/liveness", methods=["GET"])
+def health_check():
+    return jsonify(status="ALL GOOD!")
 
 @app.errorhandler(404)
 def resource_not_found(e):

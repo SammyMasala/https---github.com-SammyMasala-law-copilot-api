@@ -1,4 +1,4 @@
-from api.config import TABLE_NAME
+from api.config import CHAT_API_KEY, CHAT_MODEL, TABLE_NAME
 from api.repositories.chat_repository import ChatRepository
 from api.repositories.session_repository import SessionRepository
 from api.services.chat_service import ChatService
@@ -12,7 +12,7 @@ def init():
 
     # Services
     session_service = SessionService(table_name=TABLE_NAME, session_repository=session_repository)
-    chat_service = ChatService(chat_repository)
+    chat_service = ChatService(chat_repository, chat_api_key=CHAT_API_KEY, chat_model=CHAT_MODEL)
     return {
         # Repositories
         "session_repository": session_repository,

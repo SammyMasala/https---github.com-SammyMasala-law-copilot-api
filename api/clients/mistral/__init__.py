@@ -9,9 +9,11 @@ class MistralClient:
             context_messages = []
             for message in messages:
                 context_messages.append({"role": ("user" if message.get("isUser") is True else "assistant"), "content": message.get("message")})
+            print(context_messages)
             response = self.client.chat(model=model, messages=context_messages)
             print(response)
             return response.choices[0].message.content
-        except Exception:
-            raise
+        except Exception as exc:
+            print(exc)
+            raise exc
 

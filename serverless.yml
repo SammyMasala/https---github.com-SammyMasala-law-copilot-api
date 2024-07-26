@@ -64,6 +64,7 @@ provider:
 functions:
   api:
     handler: wsgi_handler.handler
+    timeout: 30
     events:
       - http:
           path: /

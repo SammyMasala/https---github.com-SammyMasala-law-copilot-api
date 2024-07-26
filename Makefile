@@ -1,3 +1,6 @@
+run-local:
+	python server.py
+
 sls-deploy-staging:
 	sls deploy --stage stg --region ap-southeast-1
 

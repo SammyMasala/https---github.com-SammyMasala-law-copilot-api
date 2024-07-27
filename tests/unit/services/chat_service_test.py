@@ -29,6 +29,9 @@ def test_chat_service():
             completion_tokens=37
         )
 )
-    test_messages = {}
-    with patch("api.clients.mistral.MistralChatClient.chat", return_value=mock_mistral_return):
-        assert(chat_service.chat_completion(messages=test_messages)) == mock_mistral_return
+
+    mockMessages = [{"isUser": True, "message": "Test"}]
+    chat_service: ChatService = init()["chat_service"]
+    with patch("api.clients.mistral.MistralClient.chat_response", return_value=mockResponse):
+        assert(chat_service.send_message(mockMessages)) == mockResponse
+

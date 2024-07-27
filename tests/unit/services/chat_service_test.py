@@ -31,5 +31,4 @@ def test_send_message():
     chat_service: ChatService = init()["chat_service"]
     with patch("api.clients.mistral.MistralClient.chat_response", return_value=mockResponse):
         assert(chat_service.send_message(mockMessages)) == mockResponse
-        pass
 

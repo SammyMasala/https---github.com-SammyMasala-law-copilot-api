@@ -60,6 +60,7 @@ provider:
     NODE_ENV: ${self:custom.stageVariables.${self:provider.stage}.NODE_ENV}
     SESSIONS_TABLE: ${self:custom.tableName}
     MISTRAL_API_KEY: ${ssm:/law-copilot/api/mistral-api-key}
+    MODEL_NAME: open-mixtral-8x22b
 
 functions:
   api:

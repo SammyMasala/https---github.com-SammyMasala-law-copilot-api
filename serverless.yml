@@ -22,6 +22,12 @@ plugins:
   - serverless-plugin-common-excludes
 
 custom:
+  awsRegion: ap-southeast-1
+  stageVariables:
+    stg:
+      NODE_ENV: staging
+    prod:
+      NODE_ENV: production
   wsgi:
     app: app.app
 
@@ -47,6 +53,7 @@ provider:
     TABLE_NAME: ${param:tableName}
     MISTRAL_API_KEY: ${ssm:/law-copilot/api/mistral-api-key}
     MODEL_NAME: open-mixtral-8x22b
+    AWS_REGION: ${self:custom.awsRegion}
 
 functions:
   api:

@@ -5,10 +5,8 @@ app: law-copilot
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: api
 
-stages:
-  default:
-    params:
-      tableName: "users-table-${sls:stage}"
+package:
+  excludeDevDependencies: true
 
 plugins:
   - serverless-wsgi
@@ -16,11 +14,34 @@ plugins:
   - serverless-plugin-common-excludes
 
 custom:
+  stageVariables:
+    stg:
+      NODE_ENV: staging
+    prod:
+      NODE_ENV: production
   wsgi:
     app: app.app
+  tableName: sessions-table-${self:custom.stageVariables.${self:provider.stage}.NODE_ENV}
+
+resources:
+  Resources:
+    SessionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
 
 provider:
   name: aws
+  stage: ${opt:stage}
   runtime: python3.12
   iam:
     role:
@@ -34,13 +55,17 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - Fn::GetAtt: [UsersTable, Arn]
+            - Fn::GetAtt: [SessionsTable, Arn]
   environment:
-    USERS_TABLE: ${param:tableName}
+    NODE_ENV: ${self:custom.stageVariables.${self:provider.stage}.NODE_ENV}
+    SESSIONS_TABLE: ${self:custom.tableName}
+    MISTRAL_API_KEY: ${ssm:/law-copilot/api/mistral-api-key}
+    MODEL_NAME: open-mixtral-8x22b
 
 functions:
   api:
     handler: wsgi_handler.handler
+    timeout: 30
     events:
       - http:
           path: /
@@ -48,19 +73,3 @@ functions:
       - http:
           path: /{proxy+}
           method: ANY
-
-resources:
-  Resources:
-    UsersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: userId
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${param:tableName}

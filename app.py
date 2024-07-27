@@ -35,8 +35,9 @@ def put_session():
     try: 
         print(request.json)
         body = parse_http_post(request)
-        session_service.put_session(session=body.get("session"))
-        return jsonify(result="success"),200
+        response = session_service.put_session(session=body.get("session"))
+        print(response)
+        return jsonify({"result": "success", "response": response}),200
     except Exception as exc:
         print(exc)
         return jsonify(

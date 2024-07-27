@@ -1,5 +1,6 @@
 import os
-from api.libs.aws_sm import get_secret
+# AWS
+AWS_REGION = os.environ.get("AWS_REGION", "ap-southeast-1")
 
 # Sessions 
 TABLE_NAME = os.environ.get("SESSIONS_TABLE", "sessions-table-test")

@@ -3,7 +3,7 @@ from api.init import init
 from api.services.chat_service import ChatService
 from mistralai.models.chat_completion import (ChatCompletionResponse, ChatCompletionResponseChoice, ChatMessage, UsageInfo)
 
-def test_get_session():
+def test_send_message():
     mockResponse = ChatCompletionResponse(
         id='00ecbb59eb5049ad92c4c0ff2627b06a', 
         object='chat.completion', 
@@ -31,5 +31,4 @@ def test_get_session():
     chat_service: ChatService = init()["chat_service"]
     with patch("api.clients.mistral.MistralClient.chat_response", return_value=mockResponse):
         assert(chat_service.send_message(mockMessages)) == mockResponse
-        pass
 

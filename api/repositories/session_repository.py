@@ -1,17 +1,24 @@
+from api.clients.aws.dynamodb import DynamoDBClient
+from api.config import AWS_REGION, TABLE_NAME
+
+
 class SessionRepository:
-    def get_session(self, table_name, client, id):
+    def __init__(self):
+        self.client = DynamoDBClient(region_name=AWS_REGION)
+        self.table_name = TABLE_NAME
+    def get_session(self, id):
         try:
-            return client.get_item(Key={ 
+            return self.client.get_item(key={ 
                 "id": {
                     "S": id 
                 }
-            }, TableName=table_name)
+            }, table_name=self.table_name)
         except:
             raise
 
-    def put_session(self, table_name, client, session):
+    def put_session(self, session):
         try:
-            return client.put_item(Item={
+            return self.client.put_item(item={
                 "id": {
                     "S": session.get("id") 
                 },"doc_html": {
@@ -19,17 +26,17 @@ class SessionRepository:
                 },"messages": {
                     "SS": session.get("messages") 
                 },
-            }, TableName=table_name)
+            }, table_name=self.table_name)
         except:
             raise
 
-    def delete_session(self, table_name, client, id):
+    def delete_session(self, id):
         try: 
-            return client.delete_item(Key={
+            return self.client.delete_item(key={
                 "id": {
                     "S": id 
                 }
-            }, TableName=table_name)
+            }, table_name=self.table_name)
         except: 
             raise
         

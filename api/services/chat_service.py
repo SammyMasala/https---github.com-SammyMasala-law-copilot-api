@@ -1,5 +1,4 @@
 from api.repositories.chat_repository import ChatRepository
-from mistralai.models.chat_completion import ChatMessage
 
 
 class ChatService:

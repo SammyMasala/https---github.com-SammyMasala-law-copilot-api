@@ -1,6 +1,5 @@
-from api.clients.aws.dynamodb import init_dynamodb_client
-from api.config import TABLE_NAME
 from api.repositories.session_repository import SessionRepository
+
 
 class SessionService:
     def __init__(self, session_repository: SessionRepository):

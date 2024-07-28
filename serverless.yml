@@ -22,11 +22,6 @@ plugins:
   - serverless-plugin-common-excludes
 
 custom:
-  stageVariables:
-    stg:
-      NODE_ENV: staging
-    prod:
-      NODE_ENV: production
   wsgi:
     app: app.app
 

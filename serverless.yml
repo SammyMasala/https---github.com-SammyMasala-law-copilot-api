@@ -3,12 +3,12 @@ org: chickenmasala
 # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
 app: tests
 # "service" is the name of this project. This will also be added to your AWS resource names.
-service: law-copilot-rem
+service: api-rem
 
 stages:
   default:
     params:
-      tableName: sessions-table-${sls:stage}
+      tableName: sessions-table-${param:NODE_ENV}
   stg:
     params:
       NODE_ENV: staging
@@ -27,6 +27,7 @@ custom:
 
 provider:
   name: aws
+  stage: ${param.stage}
   runtime: python3.12
   iam:
     role:
@@ -44,7 +45,7 @@ provider:
   environment:
     NODE_ENV: ${param:NODE_ENV}
     TABLE_NAME: ${param:tableName}
-    MISTRAL-API-KEY: ${ssm:api/law-copilot/mistral-api-key}
+    MISTRAL_API_KEY: ${ssm:/law-copilot/api/mistral-api-key}
     MODEL_NAME: open-mixtral-8x22b
 
 functions:

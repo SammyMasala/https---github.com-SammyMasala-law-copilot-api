@@ -1,12 +1,14 @@
 from flask import Flask, jsonify, make_response, request
 from api.init import init
 from api.libs.parse_http import parse_http_get, parse_http_post
+from api.services.chat_service import ChatService
 from api.services.session_service import SessionService
 
 app = Flask(__name__)
 init = init()
 
-session_service: SessionService = init["session_repository"]
+session_service: SessionService = init["session_service"]
+chat_service: ChatService = init["chat_service"]
 
 def create_response(status, message, payload=None):
     return {
@@ -31,19 +33,19 @@ def get_session():
         print(exc)
         return jsonify(create_response(status="operation error", message=exc)), 502
     
-@app.route('/session/put-session', methods=["POST"])
-def put_session():
+@app.route('/chat/completion', methods=["POST"])
+def chat_completion():
     try:
         body = parse_http_post(request)
         print(f"Request: {body}")
-        result = session_service.put_session(session=body.get("session"))
+        result = chat_service.chat_completion(messages=body.get("messages"))
         print(f"Result: {result}")
-        return jsonify(create_response(status="success", message="saved session", payload=result)), 200
+        return jsonify(create_response(status="success", message="received chat esponse", payload=result)), 200
     except Exception as exc:
         print(exc)
         return jsonify(create_response(status="operation error", message=exc)), 502
 
-@app.route("health-check/liveness", methods=["GET"])
+@app.route("/health-check/liveness", methods=["GET"])
 def health_check():
     return jsonify(create_response(status="success", message="ALL GOOD!")), 200
 

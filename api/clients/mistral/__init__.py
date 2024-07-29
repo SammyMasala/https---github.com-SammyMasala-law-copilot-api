@@ -1,5 +1,5 @@
 from api.clients.mistral.client import init_mistral_client
-from mistral.client import MistralClient
+from mistralai.client import MistralClient
 
 class MistralChatClient:
     def __init__(self, api_key):

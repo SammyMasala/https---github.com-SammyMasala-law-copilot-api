@@ -1,3 +1,6 @@
+run-local:
+	python server.py
+
 test-python:
 	pytest
 

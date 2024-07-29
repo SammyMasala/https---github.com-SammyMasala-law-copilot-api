@@ -8,7 +8,7 @@ service: api-rem
 stages:
   default:
     params:
-      tableName: sessions-table-${param:NODE_ENV}
+      tableName: sessions-table-rem
   stg:
     params:
       NODE_ENV: staging

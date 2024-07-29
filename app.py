@@ -22,7 +22,7 @@ def get_session():
     try:
         params = parse_http_get(request)
         print(f"Request: {params}")
-        result = session_service.get_session(id=params.get("id"))
+        result = session_service.get_session(session_id=params.get("session_id"))
         print(f"Result: {result}")
         item = result.get('Item')
         if not item:
@@ -33,8 +33,20 @@ def get_session():
         print(exc)
         return jsonify(create_response(status="operation error", message=exc)), 502
     
-@app.route('/chat/completion', methods=["POST"])
-def chat_completion():
+@app.route('/session/save-session', methods=["POST"])
+def save_session():
+    try:
+        body = parse_http_post(request)
+        print(f"Request: {body}")
+        result = session_service.put_session(session=body.get("session"))
+        print(f"Result: {result}")
+        return jsonify(create_response(status="success", message="received chat response", payload=result)), 200
+    except Exception as exc:
+        print(exc)
+        return jsonify(create_response(status="operation error", message=exc)), 502
+
+@app.route('/chat/conversation', methods=["POST"])
+def chat_conversation():
     try:
         body = parse_http_post(request)
         print(f"Request: {body}")

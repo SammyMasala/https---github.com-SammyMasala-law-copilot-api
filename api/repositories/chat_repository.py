@@ -12,8 +12,9 @@ class ChatRepository:
     def chat(self, messages):
         context_messages = [
             {
-                "role": ("user" if message.isUser is True else "assistant"),
-                "message":message.get("message")
+                "role": ("user" if message.get("isUser") is True else "assistant"),
+                "content":message.get("message")
             } for message in messages
         ]
-        return self.client.chat(model=self.MODEL_NAME, messages=context_messages)
+        reply = self.client.chat(model=self.MODEL_NAME, messages=context_messages)
+        return reply.choices[0].message.content

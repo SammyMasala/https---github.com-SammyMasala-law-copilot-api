@@ -12,7 +12,7 @@ class SessionRepository:
             "id": {
                 "S": session.get("id")
             }, "doc_html": {
-                "S": session.get("docHTML")
+                "S": session.get("doc_html")
             }, "messages": {
                 "SS": session.get("messages")
             }

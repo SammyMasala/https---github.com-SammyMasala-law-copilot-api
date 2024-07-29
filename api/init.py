@@ -1,11 +1,11 @@
-from api.repository.session_repository import SessionRepository
+from api.repositories.session_repository import SessionRepository
 from api.services.session_service import SessionService
 
 # Repositories
 session_respository = SessionRepository()
 
 # Services
-session_service = SessionService()
+session_service = SessionService(session_repository=session_respository)
 
 def init():
     return {

@@ -31,7 +31,7 @@ def get_session():
             return jsonify(create_response(status="success", message="retrieved session", payload=result)), 200
     except Exception as exc:
         print(exc)
-        return jsonify(create_response(status="operation error", message=exc)), 502
+        return jsonify(create_response(status="operation error", message=str(exc))), 502
     
 @app.route('/session/save-session', methods=["POST"])
 def save_session():
@@ -43,7 +43,7 @@ def save_session():
         return jsonify(create_response(status="success", message="received chat response", payload=result)), 200
     except Exception as exc:
         print(exc)
-        return jsonify(create_response(status="operation error", message=exc)), 502
+        return jsonify(create_response(status="operation error", message=str(exc))), 502
 
 @app.route('/chat/conversation', methods=["POST"])
 def chat_conversation():
@@ -55,7 +55,7 @@ def chat_conversation():
         return jsonify(create_response(status="success", message="received chat esponse", payload=result)), 200
     except Exception as exc:
         print(exc)
-        return jsonify(create_response(status="operation error", message=exc)), 502
+        return jsonify(create_response(status="operation error", message=str(exc))), 502
 
 @app.route("/health-check/liveness", methods=["GET"])
 def health_check():

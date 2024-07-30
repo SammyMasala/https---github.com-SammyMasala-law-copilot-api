@@ -1,14 +1,14 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: chickenmasala
 # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
-app: tests
+app: law-copilot
 # "service" is the name of this project. This will also be added to your AWS resource names.
-service: api-rem
+service: api
 
 stages:
   default:
     params:
-      tableName: sessions-table-rem
+      tableName: sessions-table-{param:NODE_ENV}
   stg:
     params:
       NODE_ENV: staging

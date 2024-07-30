@@ -1,9 +1,11 @@
 from unittest.mock import patch
+
 from api.init import init
 from api.services.session_service import SessionService
 
-def test_get_session():
-    mockResponse = {"session": {
+session_service: SessionService = init()["session_service"] 
+def test_session_service():
+    mock_get_item_return = {"session": {
         "Item": {
             "doc_html": {
                 "S": "<p>this is a test doc</p>"
@@ -33,14 +35,10 @@ def test_get_session():
             "RetryAttempts": 0
         }
     }}
+    with patch("api.clients.aws.dynamodb.DynamoDBClient.get_item", return_value=mock_get_item_return):
+        assert(session_service.get_session(session_id="test")) == mock_get_item_return
 
-    test_session_id = "test"
-    session_service: SessionService = init()["session_service"]
-    with patch("api.clients.aws.dynamodb.DynamoDBClient.get_item", return_value=mockResponse):
-        assert(session_service.get_session(session_id=test_session_id)) == mockResponse
-
-def test_put_session():
-    mockResponse = {
+    mock_put_item_return = {
         "ResponseMetadata": {
             "HTTPHeaders": {
                 "connection": "keep-alive",
@@ -56,22 +54,12 @@ def test_put_session():
             "RetryAttempts": 0
         }
     }
-
-    test_session = {
-        "id": "test",
-        "messages": [
-            "{'message': 'Hi', 'isUser': false}",
-            "{'message': 'Yo', 'isUser': true}"
-        ],
-        "doc_html": "<p>this is a test doc</p>"
-    }
-    session_service: SessionService = init()["session_service"]
-    with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mockResponse):
-        assert(session_service.put_session(session=test_session)) == mockResponse
-
-
-# def get_session(self, session_id):
-#         return self.repository.get_session(table_name=self.table_name, client=self.client, id=session_id)
-    
-#     def put_session(self, session):
-#         return self.repository.put_session(table_name=self.table_name, client=self.client, session=session)
+    with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mock_put_item_return):
+        assert(session_service.put_session(session={            
+            "id": "test",
+            "messages": [
+                "{'message': 'Hi', 'isUser': false}",
+                "{'message': 'Yo', 'isUser': true}"
+            ],
+            "doc_html": "<p>this is a test doc</p>"
+        })) == mock_put_item_return

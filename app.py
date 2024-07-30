@@ -40,7 +40,7 @@ def save_session():
         print(f"Request: {body}")
         result = session_service.put_session(session=body.get("session"))
         print(f"Result: {result}")
-        return jsonify(create_response(status="success", message="received chat response", payload=result)), 200
+        return jsonify(create_response(status="success", message="session saved", payload=result)), 200
     except Exception as exc:
         print(exc)
         return jsonify(create_response(status="operation error", message=str(exc))), 502

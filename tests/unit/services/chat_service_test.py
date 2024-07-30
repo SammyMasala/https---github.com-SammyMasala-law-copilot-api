@@ -1,12 +1,13 @@
 from unittest.mock import patch
 from mistralai.models.chat_completion import ChatMessage, ChatCompletionResponse, ChatCompletionResponseChoice, UsageInfo
 
+from mistralai.models.chat_completion import ChatMessage, ChatCompletionResponse, ChatCompletionResponseChoice, UsageInfo
+
 from api.init import init
 from api.services.chat_service import ChatService
 
-
 chat_service:ChatService = init()["chat_service"]
-def test_chat_service():
+def test_chat():
     mock_mistral_return = mockResponse = ChatCompletionResponse(
         id='00ecbb59eb5049ad92c4c0ff2627b06a', 
         object='chat.completion', 
@@ -29,9 +30,6 @@ def test_chat_service():
             completion_tokens=37
         )
 )
-
-    mockMessages = [{"isUser": True, "message": "Test"}]
-    chat_service: ChatService = init()["chat_service"]
-    with patch("api.clients.mistral.MistralClient.chat_response", return_value=mockResponse):
-        assert(chat_service.send_message(mockMessages)) == mockResponse
-
+    test_messages = [{"isUser": True, "message": "Test"}]
+    with patch("api.clients.mistral.MistralChatClient.chat", return_value=mock_mistral_return):
+        assert(chat_service.chat_completion(messages=test_messages)) == mock_mistral_return

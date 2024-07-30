@@ -1,8 +1,11 @@
 run-local:
 	python server.py
 
+test-python:
+	pytest
+
 sls-deploy-staging:
-	sls deploy --stage stg --region ap-southeast-1
+	sls deploy --region ap-southeast-1 --stage stg
 
 sls-deploy-production:
-	sls deploy --stage prod --region ap-southeast-1
+	sls deploy --region ap-southeast-1 --stage prod

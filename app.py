@@ -1,10 +1,13 @@
+import re
 from flask import Flask, jsonify, make_response, request
 from api.init import init
 from api.libs.parse_http import parse_http_get, parse_http_post
 from api.services.chat_service import ChatService
 from api.services.session_service import SessionService
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app=app, resources={r"/*": {"origins": [re.compile(r'https?://.*\.amazonaws\.com'), "http://localhost:8080"]}})
 init = init()
 
 session_service: SessionService = init["session_service"]

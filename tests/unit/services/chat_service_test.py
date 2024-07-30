@@ -4,9 +4,8 @@ from mistralai.models.chat_completion import ChatMessage, ChatCompletionResponse
 from api.init import init
 from api.services.chat_service import ChatService
 
-
 chat_service:ChatService = init()["chat_service"]
-def test_chat_service():
+def test_chat():
     mock_mistral_return = mockResponse = ChatCompletionResponse(
         id='00ecbb59eb5049ad92c4c0ff2627b06a', 
         object='chat.completion', 
@@ -29,6 +28,6 @@ def test_chat_service():
             completion_tokens=37
         )
 )
-    test_messages = {}
+    test_messages = [{"isUser": True, "message": "Test"}]
     with patch("api.clients.mistral.MistralChatClient.chat", return_value=mock_mistral_return):
         assert(chat_service.chat_completion(messages=test_messages)) == mock_mistral_return

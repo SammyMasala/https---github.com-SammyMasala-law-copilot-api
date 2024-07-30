@@ -10,4 +10,3 @@ class SessionService:
     
     def put_session(self, session):
         return self.session_repository.put_session(session=session)
-

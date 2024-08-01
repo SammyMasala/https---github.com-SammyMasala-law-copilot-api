@@ -27,9 +27,8 @@ def get_session():
         print(f"Request: {params}")
         result = session_service.get_session(session_id=params.get("session_id"))
         print(f"Result: {result}")
-        item = result.get('Item')
-        if not item:
-            return jsonify(create_response(status="not found", message="session was not found")), 404
+        if result is None:
+            return jsonify(create_response(status="not found", message="session was not found")), 200
         else:
             return jsonify(create_response(status="success", message="retrieved session", payload=result)), 200
     except Exception as exc:

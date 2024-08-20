@@ -7,6 +7,6 @@ class SessionService:
 
     def get_session(self, session_id):
         return self.session_repository.get_session(session_id=session_id)
-    
+      
     def put_session(self, session):
         return self.session_repository.put_session(session=session)

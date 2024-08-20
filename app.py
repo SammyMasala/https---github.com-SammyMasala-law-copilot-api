@@ -1,10 +1,17 @@
+import re
 from flask import Flask, jsonify, make_response, request
 from api.init import init
 from api.libs.parse_http import parse_http_get, parse_http_post
 from api.services.chat_service import ChatService
 from api.services.session_service import SessionService
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app=app, resources={r"/*": {"origins": [
+    re.compile(r'https?://.*\.amazonaws\.com'), 
+    re.compile(r'https?://.*\.learn-law-copilot\.net'),
+    "http://localhost:8080"
+    ]}})
 init = init()
 
 session_service: SessionService = init["session_service"]
@@ -24,9 +31,8 @@ def get_session():
         print(f"Request: {params}")
         result = session_service.get_session(session_id=params.get("session_id"))
         print(f"Result: {result}")
-        item = result.get('Item')
-        if not item:
-            return jsonify(create_response(status="not found", message="session was not found")), 404
+        if result is None:
+            return jsonify(create_response(status="not found", message="session was not found")), 200
         else:
             return jsonify(create_response(status="success", message="retrieved session", payload=result)), 200
     except Exception as exc:

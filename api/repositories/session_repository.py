@@ -14,7 +14,7 @@ class SessionRepository:
             }, "doc_html": {
                 "S": session.get("doc_html")
             }, "messages": {
-                "SS": session.get("messages")
+                "L": [{"S": message} for message in session.get("messages")]
             }
         }
         return self.client.put_item(table_name=self.TABLE_NAME, item=item)
@@ -26,4 +26,13 @@ class SessionRepository:
             }
         }
 
-        return self.client.get_item(key=key, table_name=self.TABLE_NAME)
+        response = self.client.get_item(key=key, table_name=self.TABLE_NAME)
+        session = response.get("Item")
+        if session is None:
+            return None
+        else: 
+            return {
+                "id": session.get("id").get("S"),
+                "doc_html": session.get("doc_html").get("S"),
+                "messages": [message.get("S") for message in session.get("messages").get("L")]
+            }

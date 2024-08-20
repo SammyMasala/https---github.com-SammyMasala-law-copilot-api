@@ -1,4 +1,4 @@
-run-local:
+start-local:
 	python server.py
 
 test-python:

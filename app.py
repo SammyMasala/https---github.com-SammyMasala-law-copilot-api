@@ -7,7 +7,11 @@ from api.services.session_service import SessionService
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app=app, resources={r"/*": {"origins": [re.compile(r'https?://.*\.amazonaws\.com'), "http://localhost:8080"]}})
+CORS(app=app, resources={r"/*": {"origins": [
+    re.compile(r'https?://.*\.amazonaws\.com'), 
+    re.compile(r'https?://.*\.learn-law-copilot\.net'),
+    "http://localhost:8080"
+    ]}})
 init = init()
 
 session_service: SessionService = init["session_service"]

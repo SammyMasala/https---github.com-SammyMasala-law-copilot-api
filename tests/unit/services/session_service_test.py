@@ -5,7 +5,7 @@ from api.services.session_service import SessionService
 
 session_service: SessionService = init()["session_service"] 
 def test_session_service():
-    mock_get_item_return = {"session": {
+    mock_get_item_return = {
         "Item": {
             "doc_html": {
                 "S": "<p>this is a test doc</p>"
@@ -14,9 +14,9 @@ def test_session_service():
                 "S": "test"
             },
             "messages": {
-                "SS": [
-                    "{'message': 'Hi', 'isUser': false}",
-                    "{'message': 'Yo', 'isUser': true}"
+                "L": [
+                    {"S": "{\"message\": \"Hi\", \"isUser\": false}"},
+                    {"S": "{\"message\": \"Yo\", \"isUser\": true}"}
                 ]
             }
         },
@@ -34,9 +34,20 @@ def test_session_service():
             "RequestId": "M48B6NKO16JFTSJ4A51RKQ0UDVVV4KQNSO5AEMVJF66Q9ASUAAJG",
             "RetryAttempts": 0
         }
-    }}
+    }
+
+    test_response = {
+        "doc_html": "<p>this is a test doc</p>",
+        "id": "test",
+        "messages": [
+            "{\"message\": \"Hi\", \"isUser\": false}", 
+            "{\"message\": \"Yo\", \"isUser\": true}"
+        ]
+    }
+
     with patch("api.clients.aws.dynamodb.DynamoDBClient.get_item", return_value=mock_get_item_return):
-        assert(session_service.get_session(session_id="test")) == mock_get_item_return
+        print(session_service.get_session(session_id="test"))
+        assert(session_service.get_session(session_id="test")) == test_response
 
     mock_put_item_return = {
         "ResponseMetadata": {

@@ -6,4 +6,9 @@ class ChatService:
         self.chat_repository:ChatRepository = chat_repository
 
     def chat_completion(self, messages):
-        return self.chat_repository.chat(messages=messages)
+        try:
+            response = self.chat_repository.chat(messages=messages)
+            print(response)
+            return response
+        except Exception:
+            raise

@@ -40,21 +40,20 @@ class ChatBlueprint(IChatBlueprint):
         """
 
         try:
-            conversation_request = ConversationRequest.model_validate({
+            conversation_request = ConversationRequest(
                 **request.json
-            })
+            )
             reply_message: str = self.chat_service.conversation(messages=conversation_request.messages)
 
-            response = ConversationResponse.model_validate({
-                "is_success": True,
-                "reply": reply_message
-            })
+            response = ConversationResponse(
+                reply=reply_message
+            )
             return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
-            response = ApiResponse.model_validate({
-                    "is_success": False,
-                    "failed_message": str(exc)
-                })
+            response = ApiResponse(
+                    is_success=False,
+                    failed_message=str(exc)
+                )
             return make_response(jsonify(response.model_dump()), 502)
         
     def ask_law(self):
@@ -70,16 +69,15 @@ class ChatBlueprint(IChatBlueprint):
             
             reply_message: str = self.chat_service.ask_law(message=ask_law_request.message)
 
-            response = AskLawResponse.model_validate({
-                "is_success": True,
-                "reply": reply_message
-            })
+            response = AskLawResponse(
+                reply=reply_message
+            )
             return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
-            response = ApiResponse.model_validate({
-                    "is_success": False,
-                    "failed_message": str(exc)
-                })
+            response = ApiResponse(
+                    is_success=False,
+                    failed_message=str(exc)
+                )
             return make_response(jsonify(response.model_dump()), 502)
  
 

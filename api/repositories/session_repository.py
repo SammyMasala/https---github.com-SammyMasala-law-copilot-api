@@ -30,7 +30,7 @@ class SessionRepository(ISessionRepository):
         except Exception:
             raise
 
-    def get(self, id):
+    def get(self, id) -> Session:
         try:
             key = {
                 "id": {
@@ -40,47 +40,11 @@ class SessionRepository(ISessionRepository):
 
             response = self.client.get_item(key=key, table_name=self.TABLE_NAME)
             print(response)
-            session = response.get("Item")
-            if session is None:
-                return None
-            else: 
-                return session
-        except Exception:
-            raise
-
-    # DEPRECATED!!
-    def legacy_put(self, session):
-        try:
-            item = {
-                "id": {
-                    "S": session.get("id", {})
-                }, "doc_html": {
-                    "S": session.get("doc_html", "")
-                }, "messages": {
-                    "L": [{"S": message} for message in session.get("messages", [])]
-                }
-            }
-            return self.client.put_item(table_name=self.TABLE_NAME, item=item)        
-        except Exception:
-            raise
-
-    def legacy_get(self, session_id):
-        try:
-            key = {
-                "id": {
-                    "S": session_id
-                }
-            }
-
-            response = self.client.get_item(key=key, table_name=self.TABLE_NAME)
-            session = response.get("Item")
-            if session is None:
-                return None
-            else: 
-                return {
-                    "id": session.get("id").get("S"),
-                    "doc_html": session.get("doc_html", {}).get("S"),
-                    "messages": [message.get("S", {}) for message in session.get("messages",{}).get("L", [])]
-                }
+            response_item = response.get("Item")
+            session = Session(
+                id=response_item.get("id").get("S"), 
+                session = response_item.get("session", {}).get("S")
+            )
+            return session
         except Exception:
             raise

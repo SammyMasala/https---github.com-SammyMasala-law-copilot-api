@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
+
+from flask import json
 from api.entities.session_entities import Session
 from api.repositories.session_repository import SessionRepository
 
@@ -39,12 +41,25 @@ class SessionService(ISessionService):
     # DEPRECATED!!
     def legacy_get_session(self, session_id):
         try:
-            return self.session_repository.legacy_get(session_id=session_id)
+            session = self.session_repository.get(id=session_id)
+            session_data = json.loads(session.session)
+            print(session)
+            session_parsed = {
+                "id": session_id,
+                "doc_html": session_data.get("doc_html"),
+                "messages": [json.dumps(message) for message in session_data.get("messages", {})]
+            }
+
+            return session_parsed
         except Exception:
             raise
             
     def legacy_update_session(self, session):
         try:
-            return self.session_repository.legacy_put(session=session)
+            session_updated = Session(
+                id=session.get("id"),
+                session=json.dumps(session)
+            )
+            return self.session_repository.put(session=session_updated)
         except Exception:
             raise

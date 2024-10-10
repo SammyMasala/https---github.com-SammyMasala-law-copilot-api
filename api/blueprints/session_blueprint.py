@@ -43,28 +43,26 @@ class SessionBlueprint(ISessionBlueprint):
 
         try:
             print(f"GET SESSION REQUEST: {id}")
-            load_session_request = LoadSessionRequest.model_validate({
-                "id": id
-            })
+            load_session_request = LoadSessionRequest(id=id)
             session: Session = self.session_service.get_session(id=load_session_request.id)
 
             if session is None:
-                response = LoadSessionResponse.model_validate({
-                    "is_success": False,
-                    "failed_message": f"session {id} not found"
-                })
+                response = LoadSessionResponse(
+                    is_success=False,
+                    failed_message=f"session {id} not found"
+                )
                 return make_response(jsonify(response.model_dump()), 404)
             else:
-                response = LoadSessionResponse.model_validate({
-                    "is_success": True,
-                    "session": session
-                })
+                response = LoadSessionResponse(
+                    is_success=True,
+                    session=session
+                )
                 return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
-            response = ApiResponse.model_validate({
-                    "is_success": False,
-                    "failed_message": str(exc)
-                })
+            response = ApiResponse(
+                    is_success=False,
+                    failed_message=str(exc)
+                )
             return make_response(jsonify(response.model_dump()), 502)
         
     def save(self, id):
@@ -73,24 +71,23 @@ class SessionBlueprint(ISessionBlueprint):
         """
         try:
             body = request.json
-            save_session_request = SaveSessionRequest.model_validate({
-                "id": id,
-                "session": body.get("session", "")
-            })
+            save_session_request = SaveSessionRequest(
+                id=id,
+                session=body.get("session", "")
+            )
             print(f"Request: {body}")
             
             result = self.session_service.update_session(session=save_session_request)
 
-            response = SaveSessionResponse.model_validate({
-                "is_success": True,
-                "session": result
-            })
+            response = SaveSessionResponse(
+                session=result
+            )
             return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
-            response = ApiResponse.model_validate({
-                    "is_success": False,
-                    "failed_message": str(exc)
-                })
+            response = ApiResponse(
+                    is_success=False,
+                    failed_message=str(exc)
+                )
             return make_response(jsonify(response.model_dump()), 502)
  
 

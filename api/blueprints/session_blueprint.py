@@ -1,6 +1,6 @@
 
 from abc import ABC, abstractmethod
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 
 from api.dtos import ApiResponse
 from api.dtos.session_dtos import LoadSessionRequest, LoadSessionResponse, SaveSessionRequest, SaveSessionResponse
@@ -43,29 +43,29 @@ class SessionBlueprint(ISessionBlueprint):
 
         try:
             print(f"GET SESSION REQUEST: {id}")
-            data = LoadSessionRequest.model_validate({
+            load_session_request = LoadSessionRequest.model_validate({
                 "id": id
             })
-            result: Session = self.session_service.get_session(id=data.id)
+            session: Session = self.session_service.get_session(id=load_session_request.id)
 
-            if result is None:
+            if session is None:
                 response = LoadSessionResponse.model_validate({
                     "is_success": False,
                     "failed_message": f"session {id} not found"
                 })
-                return jsonify(response.model_dump()), 404
+                return make_response(jsonify(response.model_dump()), 404)
             else:
                 response = LoadSessionResponse.model_validate({
                     "is_success": True,
-                    "session": result
+                    "session": session
                 })
-                return jsonify(response.model_dump()), 200
+                return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
             response = ApiResponse.model_validate({
                     "is_success": False,
                     "failed_message": str(exc)
                 })
-            return jsonify(response.model_dump()), 502
+            return make_response(jsonify(response.model_dump()), 502)
         
     def save(self, id):
         """
@@ -73,26 +73,25 @@ class SessionBlueprint(ISessionBlueprint):
         """
         try:
             body = request.json
-            print(body)
-            session = SaveSessionRequest.model_validate({
+            save_session_request = SaveSessionRequest.model_validate({
                 "id": id,
                 "session": body.get("session", "")
             })
             print(f"Request: {body}")
             
-            result = self.session_service.update_session(session=session)
+            result = self.session_service.update_session(session=save_session_request)
 
             response = SaveSessionResponse.model_validate({
                 "is_success": True,
                 "session": result
             })
-            return jsonify(response.model_dump()), 200
+            return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
             response = ApiResponse.model_validate({
                     "is_success": False,
                     "failed_message": str(exc)
                 })
-            return jsonify(response.model_dump()), 502
+            return make_response(jsonify(response.model_dump()), 502)
  
 
     # LEGACY: DEPRECATED!!

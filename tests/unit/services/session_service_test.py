@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from api.init import init
+from api import init
 from api.services.session_service import SessionService
 
 session_service: SessionService = init()["session_service"] 

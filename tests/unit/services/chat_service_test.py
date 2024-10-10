@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from mistralai.models.chat_completion import ChatMessage, ChatCompletionResponse, ChatCompletionResponseChoice, UsageInfo
 
-from api.init import init
+from api import init
 from api.services.chat_service import ChatService
 
 chat_service:ChatService = init()["chat_service"]

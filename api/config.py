@@ -7,7 +7,7 @@ NODE_ENV = os.environ.get("NODE_ENV", "staging")
 AWS_REGION = os.environ.get("AWS_REGION", "ap-southeast-1")
 
 # MISTRAL
-SYSTEM_PROMPT = """
+SYSTEM_PROMPT_LAW = """
                 PROMPT: Provide me concise notes about the given prompt in UK Law. In a response less than 300 words, give the following if known: 
                 - subject: The subject of the prompt in question. 
                 - is_law: return 'yes' if this is a legal question, 'no' if not.

@@ -69,8 +69,7 @@ class SessionBlueprint(ISessionBlueprint):
         """
         try:
             body = request.json
-            print(f"Request: {body}")
-            
+            print(f"Request: {body}")            
             result = self.session_service.update_session(id=id, session_data=body.get("session"))
 
             response = SaveSessionResponse(

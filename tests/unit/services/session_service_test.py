@@ -46,6 +46,8 @@ mock_dynamodb_put_return = {
     }
 }
 
+test_save_response = "Session saved: test"
+
 test_session = {
         "doc_html": "<p>this is a test doc</p>",
         "messages": [
@@ -71,7 +73,7 @@ def test_get_session():
 
 def test_update_session():    
     with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mock_dynamodb_put_return):
-        assert(session_service.update_session(id="test", session_data=test_session)) == mock_dynamodb_put_return
+        assert(session_service.update_session(id="test", session_data=test_session)) == test_save_response
 
 # LEGACY
 def test_legacy_get_session():
@@ -80,5 +82,5 @@ def test_legacy_get_session():
 
 def test_legacy_update_session():    
     with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mock_dynamodb_put_return):
-        assert(session_service.legacy_update_session(data=test_legacy_session)) == mock_dynamodb_put_return
+        assert(session_service.legacy_update_session(data=test_legacy_session)) == test_save_response
 

@@ -1,5 +1,5 @@
-from api.blueprints.chat_blueprint import ChatBlueprint
-from api.blueprints.session_blueprint import SessionBlueprint
+from api.blueprints import ChatBlueprint
+from api.blueprints import SessionBlueprint
 from api.repositories import *
 from api.services import *
 

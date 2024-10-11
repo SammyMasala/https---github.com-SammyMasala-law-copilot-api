@@ -46,32 +46,39 @@ mock_dynamodb_put_return = {
     }
 }
 
-def test_load():
-    test_load_response = Session(
-        id="test",
-        session="{\"messages\": [{\"message\": \"Hi\",\"isUser\": true}],\"doc_html\": \"<p>this is a test doc</p>\"}"
-    )
-
-    with patch("api.clients.aws.dynamodb.DynamoDBClient.get_item", return_value=mock_dynamodb_get_return):
-        assert(session_service.get_session(id="test")) == test_load_response
-
-def test_save():
-    test_session = Session(
-        id="test",
-        session="{\"messages\": [{\"message\": \"Hi\",\"isUser\": true}],\"doc_html\": \"<p>this is a test doc</p>\"}"
-    )
-    with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mock_dynamodb_put_return):
-        assert(session_service.update_session(session=test_session)) == mock_dynamodb_put_return
-
-# LEGACY
-def test_legacy_load():
-    test_load_response = {
+test_session = {
         "doc_html": "<p>this is a test doc</p>",
-        "id": "test",
         "messages": [
-            '{"message": "Hi", "isUser": true}',
+            {
+                "isUser": True,
+                "message": "Hi"
+            }
         ]
     }
 
+# LEGACY
+test_legacy_session = {
+    "doc_html": "<p>this is a test doc</p>",
+    "id": "test",
+    "messages": [
+        "{\"message\": \"Hi\", \"isUser\": true}",
+    ]
+}
+
+def test_get_session():
     with patch("api.clients.aws.dynamodb.DynamoDBClient.get_item", return_value=mock_dynamodb_get_return):
-        assert(session_service.legacy_get_session(id="test")) == test_load_response
+        assert(session_service.get_session(id="test")) == test_session
+
+def test_update_session():    
+    with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mock_dynamodb_put_return):
+        assert(session_service.update_session(id="test", session_data=test_session)) == mock_dynamodb_put_return
+
+# LEGACY
+def test_legacy_get_session():
+    with patch("api.clients.aws.dynamodb.DynamoDBClient.get_item", return_value=mock_dynamodb_get_return):
+        assert(session_service.legacy_get_session(id="test")) == test_legacy_session
+
+def test_legacy_update_session():    
+    with patch("api.clients.aws.dynamodb.DynamoDBClient.put_item", return_value=mock_dynamodb_put_return):
+        assert(session_service.legacy_update_session(data=test_legacy_session)) == mock_dynamodb_put_return
+

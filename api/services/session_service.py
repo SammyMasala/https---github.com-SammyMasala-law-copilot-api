@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from flask import json
-from api.dtos.session_dtos import LoadSessionResponse, SaveSessionRequest
 from api.entities.session_entities import Session
 from api.repositories.session_repository import SessionRepository
 
@@ -26,7 +25,7 @@ class SessionService(ISessionService):
             id (str): session id
 
         Returns:
-            session(any): session
+            session(any): user session
         """
         try:
             session = self.session_repository.get(id)
@@ -38,6 +37,15 @@ class SessionService(ISessionService):
             raise
             
     def update_session(self, id: str, session_data: Any):
+        """Get Session
+
+        Args:
+            id (str): session id
+            session_data(Any): session JSON
+
+        Returns:
+            reply(any): reply from put action
+        """
         try:
             session = Session(
                 id=id,

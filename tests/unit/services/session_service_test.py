@@ -46,18 +46,18 @@ mock_dynamodb_put_return = {
     }
 }
 
+
 test_save_response = "Session saved: test"
 
 test_session = {
-        "doc_html": "<p>this is a test doc</p>",
-        "messages": [
-            {
-                "isUser": True,
-                "message": "Hi"
-            }
-        ]
-    }
-
+      "doc_html": "<p>this is a test doc</p>",
+      "messages": [
+          {
+              "isUser": True,
+              "message": "Hi"
+          }
+      ]
+  }
 # LEGACY
 test_legacy_session = {
     "doc_html": "<p>this is a test doc</p>",

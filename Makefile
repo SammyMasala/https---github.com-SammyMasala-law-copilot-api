@@ -1,7 +1,7 @@
 start-local:
 	python server.py
 
-test-python:
+test:
 	pytest
 
 sls-dev:

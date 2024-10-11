@@ -1,5 +1,6 @@
 
 from abc import ABC, abstractmethod
+from typing import Any
 from flask import Blueprint, jsonify, make_response, request
 
 from api.dtos import ApiResponse
@@ -67,10 +68,10 @@ class ChatBlueprint(IChatBlueprint):
             })
             print(f"Request: {body}")
             
-            reply_message: str = self.chat_service.ask_law(message=ask_law_request.message)
+            reply: Any = self.chat_service.ask_law(message=ask_law_request.message)
 
             response = AskLawResponse(
-                reply=reply_message
+                reply=reply
             )
             return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:

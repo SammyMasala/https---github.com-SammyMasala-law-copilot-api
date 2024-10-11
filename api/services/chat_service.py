@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Any, List
+
+from flask import json
 from api.clients.mistral import MistralChatClient
 from api.config import MISTRAL_API_KEY, MODEL_NAME, SYSTEM_PROMPT_LAW
 from api.entities.chat_entities import Message
@@ -10,7 +12,7 @@ class IChatService(ABC):
         pass
 
     @abstractmethod
-    def ask_law(self, message:Message) -> str:
+    def ask_law(self, message:Message) -> Any:
         pass
 
 class ChatService(IChatService):
@@ -38,7 +40,7 @@ class ChatService(IChatService):
         except Exception:
             raise 
 
-    def ask_law(self, message:Message) -> str:
+    def ask_law(self, message:Message) -> Any:
         try:
             system_message = [{"role": "system", "content": self.system_prompt_law}]
             prompt_message = [  
@@ -48,7 +50,7 @@ class ChatService(IChatService):
                 } 
             ]
             reply = self.client.chat(model=self.model_name, messages=system_message + prompt_message)
-            return reply.choices[0].message.content
+            return json.loads(reply.choices[0].message.content)
         except Exception:
             raise 
 

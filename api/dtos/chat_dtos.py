@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 from pydantic import BaseModel
 
 from api.dtos import ApiResponse
@@ -16,4 +16,4 @@ class AskLawRequest(BaseModel):
     message: Message
 
 class AskLawResponse(ApiResponse):
-    reply: str
+    reply: Any

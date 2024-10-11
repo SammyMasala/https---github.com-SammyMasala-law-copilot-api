@@ -61,13 +61,16 @@ class SessionService(ISessionService):
     # Legacy Support
     def legacy_get_session(self, id) -> Any:
         session = self.get_session(id=id)
-        session_filter_messages = {key:value for key, value in session.items() if key != "messages"}
+        if session is not None:
+            session_filter_messages = {key:value for key, value in session.items() if key != "messages"}
 
-        return{
-            "id": id,
-            "messages": [json.dumps(message) for message in session.get("messages", [])],
-            **session_filter_messages
-        }
+            return{
+                "id": id,
+                "messages": [json.dumps(message) for message in session.get("messages", [])],
+                **session_filter_messages
+            }
+        else:
+            return None       
     
     def legacy_update_session(self, data: Any):
         try:

@@ -11,8 +11,9 @@ class LoadSessionResponse(ApiResponse):
     session: Any = None
 
 # Save Session
-class SaveSessionRequest(Session):
-    pass
+class SaveSessionRequest(BaseModel):
+    id: str
+    session: Any = None
 
 class SaveSessionResponse(ApiResponse):
-    session: Any = None
+    reply: Any = None

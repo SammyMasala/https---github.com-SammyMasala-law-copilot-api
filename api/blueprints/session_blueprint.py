@@ -1,10 +1,10 @@
 
 from abc import ABC, abstractmethod
+from typing import Any
 from flask import Blueprint, jsonify, request, make_response
 
 from api.dtos import ApiResponse
-from api.dtos.session_dtos import LoadSessionRequest, LoadSessionResponse, SaveSessionRequest, SaveSessionResponse
-from api.entities.session_entities import Session
+from api.dtos.session_dtos import LoadSessionRequest, LoadSessionResponse, SaveSessionResponse
 from api.services.session_service import SessionService
 
 class ISessionBlueprint(ABC):
@@ -44,7 +44,7 @@ class SessionBlueprint(ISessionBlueprint):
         try:
             print(f"GET SESSION REQUEST: {id}")
             load_session_request = LoadSessionRequest(id=id)
-            session: Session = self.session_service.get_session(id=load_session_request.id)
+            session: Any = self.session_service.get_session(id=load_session_request.id)
 
             if session is None:
                 response = LoadSessionResponse(
@@ -53,8 +53,8 @@ class SessionBlueprint(ISessionBlueprint):
                 )
                 return make_response(jsonify(response.model_dump()), 404)
             else:
+                print(session)
                 response = LoadSessionResponse(
-                    is_success=True,
                     session=session
                 )
                 return make_response(jsonify(response.model_dump()), 200)
@@ -71,16 +71,12 @@ class SessionBlueprint(ISessionBlueprint):
         """
         try:
             body = request.json
-            save_session_request = SaveSessionRequest(
-                id=id,
-                session=body.get("session", "")
-            )
             print(f"Request: {body}")
             
-            result = self.session_service.update_session(session=save_session_request)
+            result = self.session_service.update_session(id=id, session_data=body.get("session"))
 
             response = SaveSessionResponse(
-                session=result
+                reply=result
             )
             return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
@@ -103,7 +99,8 @@ class SessionBlueprint(ISessionBlueprint):
         try:
             params = request.args
             print(f"Request: {params}")
-            result = self.session_service.legacy_get_session(session_id=params.get("session_id"))
+            result = self.session_service.legacy_get_session(id=params.get("session_id"))
+
             print(f"Result: {result}")
             if result is None:
                 return jsonify(self._legacy_create_response(status="not found", message="session was not found")), 404
@@ -115,9 +112,11 @@ class SessionBlueprint(ISessionBlueprint):
         
     def legacy_save(self):
         try:
+            
             body = request.json
             print(f"Request: {body}")
-            result = self.session_service.legacy_update_session(session=body.get("session"))
+
+            result = self.session_service.legacy_update_session(data=body.get("session"))
             print(f"Result: {result}")
             return jsonify(self._legacy_create_response(status="success", message="saved session", payload=result)), 200
         except Exception as exc:

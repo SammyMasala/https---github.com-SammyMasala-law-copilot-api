@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from flask import json
+from api.dtos.session_dtos import LoadSessionResponse, SaveSessionRequest
 from api.entities.session_entities import Session
 from api.repositories.session_repository import SessionRepository
 
@@ -18,7 +19,7 @@ class SessionService(ISessionService):
     def __init__(self, session_repository):
         self.session_repository: SessionRepository = session_repository
 
-    def get_session(self, id):
+    def get_session(self, id) -> Any:
         """Get Session
 
         Args:
@@ -28,38 +29,44 @@ class SessionService(ISessionService):
             session(any): session
         """
         try:
-            return self.session_repository.get(id)
+            session = self.session_repository.get(id)
+            return json.loads(session.session)
         except Exception:
             raise
             
-    def update_session(self, session: Session):
+    def update_session(self, id: str, session_data: Any):
         try:
+            session = Session(
+                id=id,
+                session=json.dumps(session_data)
+            )
             return self.session_repository.put(session=session)
         except Exception:
             raise
 
-    # DEPRECATED!!
-    def legacy_get_session(self, session_id):
-        try:
-            session = self.session_repository.get(id=session_id)
-            session_data = json.loads(session.session)
-            print(session)
-            session_parsed = {
-                "id": session_id,
-                "doc_html": session_data.get("doc_html"),
-                "messages": [json.dumps(message) for message in session_data.get("messages", {})]
-            }
+    # Legacy Support
+    def legacy_get_session(self, id) -> Any:
+        session = self.get_session(id=id)
+        session_filter_messages = {key:value for key, value in session.items() if key != "messages"}
 
-            return session_parsed
-        except Exception:
-            raise
-            
-    def legacy_update_session(self, session):
+        return{
+            "id": id,
+            "messages": [json.dumps(message) for message in session.get("messages", [])],
+            **session_filter_messages
+        }
+    
+    def legacy_update_session(self, data: Any):
         try:
-            session_updated = Session(
-                id=session.get("id"),
-                session=json.dumps(session)
+            id = data.get("id")
+            
+            session_data = {
+                "doc_html": data.get("doc_html", ""),
+                "messages": [json.loads(message) for message in data.get("messages", [])]
+            }
+            session = Session(
+                id=id,
+                session=json.dumps(session_data)
             )
-            return self.session_repository.put(session=session_updated)
+            return self.session_repository.put(session=session)
         except Exception:
             raise

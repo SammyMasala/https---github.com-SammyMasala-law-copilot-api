@@ -9,7 +9,7 @@ class ISessionRepository(ABC):
     def put(self, session: Session) -> Any:
         pass
     @abstractmethod
-    def get(self, id) -> Any:
+    def get(self, id) -> Session:
         pass
 
 class SessionRepository(ISessionRepository):
@@ -39,11 +39,10 @@ class SessionRepository(ISessionRepository):
             }
 
             response = self.client.get_item(key=key, table_name=self.TABLE_NAME)
-            print(response)
             response_item = response.get("Item")
             session = Session(
                 id=response_item.get("id").get("S"), 
-                session = response_item.get("session", {}).get("S")
+                session=response_item.get("session", {}).get("S")
             )
             return session
         except Exception:

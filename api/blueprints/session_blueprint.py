@@ -45,15 +45,13 @@ class SessionBlueprint(ISessionBlueprint):
             print(f"GET SESSION REQUEST: {id}")
             load_session_request = LoadSessionRequest(id=id)
             session: Any = self.session_service.get_session(id=load_session_request.id)
-
             if session is None:
                 response = LoadSessionResponse(
                     is_success=False,
-                    failed_message=f"session {id} not found"
+                    failed_message=f"Existing session not found: {id}"
                 )
                 return make_response(jsonify(response.model_dump()), 404)
             else:
-                print(session)
                 response = LoadSessionResponse(
                     session=session
                 )
@@ -81,9 +79,9 @@ class SessionBlueprint(ISessionBlueprint):
             return make_response(jsonify(response.model_dump()), 200)
         except Exception as exc:
             response = ApiResponse(
-                    is_success=False,
-                    failed_message=str(exc)
-                )
+                is_success=False,
+                failed_message=str(exc)
+            )
             return make_response(jsonify(response.model_dump()), 502)
  
 

@@ -30,7 +30,10 @@ class SessionService(ISessionService):
         """
         try:
             session = self.session_repository.get(id)
-            return json.loads(session.session)
+            if session is not None:
+                return json.loads(session.session)
+            else:
+                return None
         except Exception:
             raise
             
@@ -40,7 +43,10 @@ class SessionService(ISessionService):
                 id=id,
                 session=json.dumps(session_data)
             )
-            return self.session_repository.put(session=session)
+            if self.session_repository.put(session=session) is not None:
+                return f"Session saved: {id}"  
+            else: 
+                return False
         except Exception:
             raise
 
@@ -67,6 +73,10 @@ class SessionService(ISessionService):
                 id=id,
                 session=json.dumps(session_data)
             )
-            return self.session_repository.put(session=session)
+            if self.session_repository.put(session=session) is not None:
+                return f"Session saved: {id}"  
+            else: 
+                return False
+
         except Exception:
             raise

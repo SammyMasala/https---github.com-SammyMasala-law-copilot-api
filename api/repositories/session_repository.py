@@ -40,10 +40,13 @@ class SessionRepository(ISessionRepository):
 
             response = self.client.get_item(key=key, table_name=self.TABLE_NAME)
             response_item = response.get("Item")
-            session = Session(
-                id=response_item.get("id").get("S"), 
-                session=response_item.get("session", {}).get("S")
-            )
-            return session
+            if response_item is None:
+                return None
+            else:
+                session = Session(
+                    id=response_item.get("id").get("S"), 
+                    session=response_item.get("session", {}).get("S")
+                )
+                return session
         except Exception:
             raise

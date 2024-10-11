@@ -93,9 +93,9 @@ class ChatBlueprint(IChatBlueprint):
         try:
             body = request.json
             print(f"Request: {body}")
-            result = self.chat_service.legacy_ask_law(messages=body.get("messages"))
+            result = self.chat_service.legacy_conversation(messages=body.get("messages"))
             print(f"Result: {result}")
-            return jsonify(self._legacy_create_response(status="success", message="received chat esponse", payload=result)), 200
+            return jsonify(self._legacy_create_response(status="success", message="received chat response", payload=result)), 200
         except Exception as exc:
             print(exc)
             return jsonify(self._legacy_create_response(status="operation error", message=str(exc))), 502

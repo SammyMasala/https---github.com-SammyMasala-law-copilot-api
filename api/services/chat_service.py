@@ -53,16 +53,16 @@ class ChatService(IChatService):
             raise 
 
     # Legacy
-    def legacy_ask_law(self, messages):
+    def legacy_conversation(self, messages):
+        MAX_MESSAGES = 6 # Max number of past messages to control input token cost
         try:
-            system_message = [{"role": "system", "content": self.system_prompt_law}]
             prompt_messages = [  
                 {
                     "role": ("user" if message.get("isUser") is True else "assistant"),
                     "content":message.get("message")
-                } for message in messages
+                } for message in messages[max(0, len(messages)-MAX_MESSAGES):len(messages)]
             ]
-            reply = self.client.chat(model=self.model_name, messages=system_message + prompt_messages)
+            reply = self.client.chat(model=self.model_name, messages=prompt_messages)
             return reply.choices[0].message.content
         except Exception:
             raise 
